@@ -1,14 +1,12 @@
 [package]
-edition = "2018"
+edition = "2024"
 name = "crust"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-aws_lambda_events = "0.15.1"
-http = "0.2.9"
-lambda_runtime = "1.0.2"
+lambda_runtime = "0.14.3"
 log = "0.4.29"
 simple_logger = "5.1.0"
 serde = { version = "1.0", features = ["derive"] }

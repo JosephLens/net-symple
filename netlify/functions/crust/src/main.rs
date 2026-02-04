@@ -1,5 +1,3 @@
-use aws_lambda_events::encodings::Body;
-use aws_lambda_events::event::apigw::ApiGatewayProxyResponse;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde_json::Value;
 use log::LevelFilter;
@@ -12,18 +10,13 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-async fn my_handler(event: LambdaEvent<Value>) -> Result<ApiGatewayProxyResponse, Error> {
+async fn my_handler(event: LambdaEvent<Value>) -> Result<Value, Error> {
     let path = event.payload.get("path")
         .and_then(|v| v.as_str())
         .unwrap_or("/");
 
-    let resp = ApiGatewayProxyResponse {
-        status_code: 200,
-        headers: aws_lambda_events::http::HeaderMap::new(),
-        multi_value_headers: aws_lambda_events::http::HeaderMap::new(),
-        body: Some(Body::Text(format!("Alloha from '{}' good", path))),
-        is_base64_encoded: false,
-    };
-
-    Ok(resp)
+    Ok(serde_json::json!({
+        "message": format!("Alloha from '{}' good", path),
+        "path": path
+    }))
 }
