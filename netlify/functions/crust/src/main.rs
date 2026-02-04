@@ -1,5 +1,4 @@
-use aws_lambda_events::encodings::Body;
-use http::{HeaderMap, Request, Response};
+use lambda_http::{NextEvent, Request, Response};
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
