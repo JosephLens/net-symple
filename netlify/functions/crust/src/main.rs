@@ -15,8 +15,16 @@ async fn my_handler(event: LambdaEvent<Value>) -> Result<Value, Error> {
         .and_then(|v| v.as_str())
         .unwrap_or("/");
 
-    Ok(serde_json::json!({
+    let body = serde_json::json!({
         "message": format!("Alloha from '{}' good", path),
         "path": path
+    });
+
+    Ok(serde_json::json!({
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": body.to_string()
     }))
 }
