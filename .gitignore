@@ -1,2 +1,5 @@
 # Local Netlify folder
 .netlify
+
+# Rust build directory
+netlify/functions/**/target/

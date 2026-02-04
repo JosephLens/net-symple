@@ -1,6 +1,5 @@
 use aws_lambda_events::event::apigw::{ApiGatewayProxyRequest, ApiGatewayProxyResponse};
 use aws_lambda_events::encodings::Body;
-use http::header::HeaderMap;
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
@@ -19,10 +18,10 @@ pub(crate) async fn my_handler(event: LambdaEvent<ApiGatewayProxyRequest>) -> Re
 
     let resp = ApiGatewayProxyResponse {
         status_code: 200,
-        headers: HeaderMap::new(),
-        multi_value_headers: HeaderMap::new(),
+        headers: aws_lambda_events::http::HeaderMap::new(),
+        multi_value_headers: aws_lambda_events::http::HeaderMap::new(),
         body: Some(Body::Text(format!("Alloha from '{}' good", path))),
-        is_base64_encoded: Some(false),
+        is_base64_encoded: false,
     };
 
     Ok(resp)
