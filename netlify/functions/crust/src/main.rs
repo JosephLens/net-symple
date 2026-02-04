@@ -1,23 +1,29 @@
-use lambda_http::{run, Body, Error, Request, Response};
-use lambda_runtime::service_fn;
+use aws_lambda_events::encodings::Body;
+use aws_lambda_events::event::apigw::ApiGatewayProxyResponse;
+use lambda_runtime::{service_fn, Error, LambdaEvent};
+use serde_json::Value;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     SimpleLogger::new().with_utc_timestamps().with_level(LevelFilter::Info).init().unwrap();
-    run(service_fn(my_handler)).await?;
+    lambda_runtime::run(service_fn(my_handler)).await?;
     Ok(())
 }
 
-async fn my_handler(event: Request) -> Result<Response<Body>, Error> {
-    let path = event.uri().path();
+async fn my_handler(event: LambdaEvent<Value>) -> Result<ApiGatewayProxyResponse, Error> {
+    let path = event.payload.get("path")
+        .and_then(|v| v.as_str())
+        .unwrap_or("/");
 
-    let resp = Response::builder()
-        .status(200)
-        .header("content-type", "text/plain")
-        .body(Body::Text(format!("Alloha from '{}' good", path)))
-        .map_err(|e| Error::from(e.to_string()))?;
+    let resp = ApiGatewayProxyResponse {
+        status_code: 200,
+        headers: aws_lambda_events::http::HeaderMap::new(),
+        multi_value_headers: aws_lambda_events::http::HeaderMap::new(),
+        body: Some(Body::Text(format!("Alloha from '{}' good", path))),
+        is_base64_encoded: false,
+    };
 
     Ok(resp)
 }
